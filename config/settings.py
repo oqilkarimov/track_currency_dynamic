@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "apps.account",
 ]
 
 MIDDLEWARE = [
@@ -57,5 +58,6 @@ USE_I18N = True
 USE_TZ = True
 
 include("components/db.py")
+include("components/apps.py")
 include("components/security.py")
 include("components/drf.py")
