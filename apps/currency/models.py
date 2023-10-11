@@ -1,5 +1,17 @@
 from django.db import models
-from django.db.models import BooleanField, ExpressionWrapper, Manager, Q
+from django.db.models import (
+    BooleanField,
+    Case,
+    ExpressionWrapper,
+    F,
+    FloatField,
+    Manager,
+    Max,
+    Min,
+    Q,
+    Value,
+    When,
+)
 from django.utils import timezone
 
 from apps.account.models import User
@@ -41,9 +53,23 @@ class CurrencyAnalyticsManager(Manager):
         rates_by_giving_period_for = CurrencyRate.objects.filter(
             currency=currency, rate_date__date__gte=date_from, rate_date__date__lte=date_to
         )
-
+        max_min_values_in_query = rates_by_giving_period_for.aggregate(
+            max_value=Max("value"), min_value=Min("value")
+        )
         return rates_by_giving_period_for.annotate(
-            is_threshold_exceeded=ExpressionWrapper(Q(value__gte=threshold), output_field=BooleanField())
+            is_threshold_exceeded=ExpressionWrapper(Q(value__gte=threshold), output_field=BooleanField()),
+            threshold_match_type=Case(
+                When(value__gt=threshold, then=Value("greater")),
+                When(value__lt=threshold, then=Value("less")),
+                When(value=threshold, then=Value("equal")),
+            ),
+            is_max_value=ExpressionWrapper(
+                Q(value=max_min_values_in_query["max_value"]), output_field=BooleanField()
+            ),
+            is_min_value=ExpressionWrapper(
+                Q(value=max_min_values_in_query["min_value"]), output_field=BooleanField()
+            ),
+            percentage=ExpressionWrapper(100 * F("value") / threshold, output_field=FloatField()),
         )
 
 

@@ -39,7 +39,22 @@ class CurrencyAnalyticsQueryParamsSerializer(serializers.Serializer):
 
 class CurrencyAnalyticsResultSerializer(CurrencyRateSerializerBase):
     is_threshold_exceeded = serializers.BooleanField(default=False)
+    threshold_match_type = serializers.CharField()
+    is_max_value = serializers.BooleanField(default=False)
+    is_min_value = serializers.BooleanField(default=False)
+    percentage_ratio = serializers.SerializerMethodField()
+
+    def get_percentage_ratio(self, currency):
+        print(currency.percentage)
+        return f"{currency.percentage:.2f}%"
 
     class Meta:
         model = CurrencyRate
-        fields = (*CurrencyRateSerializerBase.Meta.fields, "is_threshold_exceeded")
+        fields = (
+            *CurrencyRateSerializerBase.Meta.fields,
+            "is_threshold_exceeded",
+            "threshold_match_type",
+            "is_max_value",
+            "is_min_value",
+            "percentage_ratio",
+        )
