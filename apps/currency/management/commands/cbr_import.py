@@ -22,3 +22,4 @@ class Command(BaseCommand):
                 result = cbr_process.get_archive_currency_rates(date)
                 cbr_response: CBRResponse = CBRResponse.from_dict(result)
                 cbr_process.import_to_db(data=cbr_response)
+        self.stdout.write(self.style.SUCCESS("Successfully imported"))
