@@ -30,7 +30,7 @@ class CurrencyRatesAPIView(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(queryset, context={"user": self.request.user}, many=True)
         return Response(serializer.data)
 
 

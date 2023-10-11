@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
+from apps.account.models import User
+
 
 class CurrencyRate(models.Model):
     currency = models.ForeignKey("currency.Currency", on_delete=models.CASCADE, related_name="rates")
@@ -13,6 +15,11 @@ class CurrencyRate(models.Model):
 
     def __str__(self) -> str:
         return f"{self.currency.name}/{self.value}"
+
+    def is_threshold_exceeded_by_giving_user(self, user: User) -> bool:
+        if user_threshold := user.currency_thresholds.filter(currency=self.currency).first():
+            return self.value > user_threshold.threshold
+        return False
 
     class Meta:
         ordering = ["-rate_date"]

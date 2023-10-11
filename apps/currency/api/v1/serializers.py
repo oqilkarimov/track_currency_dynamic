@@ -13,7 +13,10 @@ class CurrencyRateSerializerBase(serializers.ModelSerializer):
 
 
 class CurrencyRateSerializerForAuthenticated(CurrencyRateSerializerBase):
-    is_threshold_exceeded = serializers.BooleanField(default=False)
+    is_threshold_exceeded = serializers.SerializerMethodField()
+
+    def get_is_threshold_exceeded(self, currency_rate: CurrencyRate):
+        return currency_rate.is_threshold_exceeded_by_giving_user(user=self.context["user"])
 
     class Meta:
         model = CurrencyRate
