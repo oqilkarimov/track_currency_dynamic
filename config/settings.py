@@ -10,8 +10,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 ROOT_URLCONF = "config.urls"
 
 # Application definition
-INSTALLED_APPS = [
-    "apps.account",
+LOCAL_APPS = ["apps.account", "apps.currency"]
+DJANGO_DEFAULT_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -19,6 +19,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 ]
+EXTERNAL_APPS = ["rest_framework", "rest_framework_simplejwt"]
+INSTALLED_APPS = LOCAL_APPS + DJANGO_DEFAULT_APPS + EXTERNAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
