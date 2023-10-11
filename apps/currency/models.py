@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import BooleanField, ExpressionWrapper, Manager, Q
 from django.utils import timezone
 
 from apps.account.models import User
@@ -35,11 +36,24 @@ class CurrencyThreshold(models.Model):
         unique_together = ["currency", "user"]
 
 
+class CurrencyAnalyticsManager(Manager):
+    def get_analytics_by_giving_period(self, currency, threshold, date_from, date_to):
+        rates_by_giving_period_for = CurrencyRate.objects.filter(
+            currency=currency, rate_date__date__gte=date_from, rate_date__date__lte=date_to
+        )
+
+        return rates_by_giving_period_for.annotate(
+            is_threshold_exceeded=ExpressionWrapper(Q(value__gte=threshold), output_field=BooleanField())
+        )
+
+
 class Currency(models.Model):
     name = models.CharField(max_length=255, unique=True)
     currency_id = models.CharField(max_length=50, unique=True)
     number_code = models.CharField(max_length=50)
     char_code = models.CharField(max_length=50, unique=True)
+
+    objects = CurrencyAnalyticsManager()
 
     def __str__(self) -> str:
         return f"{self.char_code}/{self.name}"

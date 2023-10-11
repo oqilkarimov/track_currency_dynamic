@@ -29,3 +29,17 @@ class CurrencyThresholdCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CurrencyThreshold
         fields = ["currency", "threshold", "user"]
+
+
+class CurrencyAnalyticsQueryParamsSerializer(serializers.Serializer):
+    threshold = serializers.DecimalField(max_digits=10, decimal_places=4)
+    date_from = serializers.DateField()
+    date_to = serializers.DateField()
+
+
+class CurrencyAnalyticsResultSerializer(CurrencyRateSerializerBase):
+    is_threshold_exceeded = serializers.BooleanField(default=False)
+
+    class Meta:
+        model = CurrencyRate
+        fields = (*CurrencyRateSerializerBase.Meta.fields, "is_threshold_exceeded")

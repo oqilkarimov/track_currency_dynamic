@@ -1,4 +1,5 @@
 from django.utils import timezone
+from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -6,11 +7,13 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from apps.currency.api.v1.serializers import (
+    CurrencyAnalyticsQueryParamsSerializer,
+    CurrencyAnalyticsResultSerializer,
     CurrencyRateSerializerBase,
     CurrencyRateSerializerForAuthenticated,
     CurrencyThresholdCreateSerializer,
 )
-from apps.currency.models import CurrencyRate
+from apps.currency.models import Currency, CurrencyRate
 
 
 class CurrencyRatesAPIView(ListAPIView):
@@ -37,3 +40,23 @@ class CurrencyRatesAPIView(ListAPIView):
 class CurrencyThresholdCreateViewSet(CreateModelMixin, GenericViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = CurrencyThresholdCreateSerializer
+
+
+class CurrencyAnalyticsViewSet(GenericViewSet):
+    permission_classes = [AllowAny]
+    queryset = Currency.objects.all()
+
+    @action(["get"], detail=True)
+    def analytics(self, request, *args, **kwargs):
+        currency: Currency = self.get_object()
+        query_params_serializer = CurrencyAnalyticsQueryParamsSerializer(data=request.query_params)
+        query_params_serializer.is_valid(raise_exception=True)
+        analytics = Currency.objects.get_analytics_by_giving_period(
+            currency=currency, **query_params_serializer.validated_data
+        )
+        return Response(
+            CurrencyAnalyticsResultSerializer(
+                analytics,
+                many=True,
+            ).data
+        )
