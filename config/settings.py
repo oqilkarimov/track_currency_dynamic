@@ -19,7 +19,7 @@ DJANGO_DEFAULT_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 ]
-EXTERNAL_APPS = ["rest_framework", "rest_framework_simplejwt"]
+EXTERNAL_APPS = ["django_celery_beat", "rest_framework", "rest_framework_simplejwt"]
 INSTALLED_APPS = LOCAL_APPS + DJANGO_DEFAULT_APPS + EXTERNAL_APPS
 
 MIDDLEWARE = [
@@ -61,5 +61,6 @@ USE_TZ = True
 
 include("components/db.py")
 include("components/apps.py")
+include("components/celery_conf.py")
 include("components/security.py")
 include("components/drf.py")

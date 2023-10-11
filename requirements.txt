@@ -8,3 +8,6 @@ django-filter==23.3
 Markdown==3.5
 djangorestframework-simplejwt==5.3.0
 requests==2.31.0
+celery==5.3.4
+redis==5.0.1
+django-celery-beat==2.5.0
