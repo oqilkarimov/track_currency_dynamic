@@ -6,6 +6,7 @@ from apps.currency.models import Currency, CurrencyRate
 @admin.register(Currency)
 class CurrencyAdmin(admin.ModelAdmin):
     list_display = ["name", "currency_id", "number_code", "char_code"]
+    search_fields = ["name", "char_code"]
 
 
 @admin.register(CurrencyRate)

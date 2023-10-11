@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.currency.models import CurrencyRate
+from apps.currency.models import CurrencyRate, CurrencyThreshold
 
 
 class CurrencyRateSerializerBase(serializers.ModelSerializer):
@@ -18,3 +18,11 @@ class CurrencyRateSerializerForAuthenticated(CurrencyRateSerializerBase):
     class Meta:
         model = CurrencyRate
         fields = (*CurrencyRateSerializerBase.Meta.fields, "is_threshold_exceeded")
+
+
+class CurrencyThresholdCreateSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = CurrencyThreshold
+        fields = ["currency", "threshold", "user"]

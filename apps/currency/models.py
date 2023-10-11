@@ -19,6 +19,15 @@ class CurrencyRate(models.Model):
         unique_together = ["currency", "rate_date"]
 
 
+class CurrencyThreshold(models.Model):
+    user = models.ForeignKey("account.User", on_delete=models.CASCADE, related_name="currency_thresholds")
+    threshold = models.DecimalField(max_digits=10, decimal_places=4)
+    currency = models.ForeignKey("currency.Currency", on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ["currency", "user"]
+
+
 class Currency(models.Model):
     name = models.CharField(max_length=255, unique=True)
     currency_id = models.CharField(max_length=50, unique=True)

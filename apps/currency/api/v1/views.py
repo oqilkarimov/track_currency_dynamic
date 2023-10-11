@@ -1,11 +1,14 @@
 from django.utils import timezone
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.mixins import CreateModelMixin
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 
 from apps.currency.api.v1.serializers import (
     CurrencyRateSerializerBase,
     CurrencyRateSerializerForAuthenticated,
+    CurrencyThresholdCreateSerializer,
 )
 from apps.currency.models import CurrencyRate
 
@@ -29,3 +32,8 @@ class CurrencyRatesAPIView(ListAPIView):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class CurrencyThresholdCreateViewSet(CreateModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CurrencyThresholdCreateSerializer
