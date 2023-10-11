@@ -19,7 +19,7 @@ DJANGO_DEFAULT_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 ]
-EXTERNAL_APPS = ["django_celery_beat", "rest_framework", "rest_framework_simplejwt"]
+EXTERNAL_APPS = ["django_filters", "django_celery_beat", "rest_framework", "rest_framework_simplejwt"]
 INSTALLED_APPS = LOCAL_APPS + DJANGO_DEFAULT_APPS + EXTERNAL_APPS
 
 MIDDLEWARE = [

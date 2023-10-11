@@ -11,3 +11,4 @@ class CurrencyAdmin(admin.ModelAdmin):
 @admin.register(CurrencyRate)
 class CurrencyRateAdmin(admin.ModelAdmin):
     list_display = ["currency", "value", "prev_value", "rate_date"]
+    date_hierarchy = "rate_date"
