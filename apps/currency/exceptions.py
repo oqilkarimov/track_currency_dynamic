@@ -1,0 +1,2 @@
+class CBRException(Exception):
+    pass
