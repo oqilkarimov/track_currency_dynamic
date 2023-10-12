@@ -19,7 +19,10 @@ class Command(BaseCommand):
             with contextlib.suppress(Exception):
                 date = timezone.now().date() - timedelta(days=day_ago)
                 cbr_process = CBRProcess()
-                result = cbr_process.get_archive_currency_rates(date)
+                if timezone.now().date() == date:
+                    result = cbr_process.get_today_currency_rates()
+                else:
+                    result = cbr_process.get_archive_currency_rates(date)
                 cbr_response: CBRResponse = CBRResponse.from_dict(result)
                 cbr_process.import_to_db(data=cbr_response)
         self.stdout.write(self.style.SUCCESS("Successfully imported"))

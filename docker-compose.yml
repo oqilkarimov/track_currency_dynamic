@@ -1,0 +1,75 @@
+version: "3.8"
+
+services:
+  currency_app:
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile
+    restart: always
+    volumes:
+      - app_static_volume:/app/app-static
+      - app_media_volume:/app/app-media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./deployment/stage-env.local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+  celery-worker:
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile
+    restart: always
+    command: celery -A config worker -l info
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  celery-beat:
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile
+    restart: always
+    command: celery -A config beat -l info
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  nginx:
+    build:
+      context: .
+      dockerfile: ./deployment/nginx/Dockerfile
+    volumes:
+      - app_static_volume:/app/static
+      - app_media_volume:/app/media
+    depends_on:
+      - currency_app
+    ports:
+      - 8080:8802
+
+volumes:
+  app_static_volume:
+  app_media_volume:
+  postgres_data:
+  redis_data:
