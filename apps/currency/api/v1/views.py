@@ -1,4 +1,6 @@
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
 from rest_framework.mixins import CreateModelMixin
@@ -31,6 +33,7 @@ class CurrencyRatesAPIView(ListAPIView):
             self.serializer_class = CurrencyRateSerializerForAuthenticated
         return super().get_serializer_class()
 
+    @method_decorator(cache_page(60 * 5))
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, context={"user": self.request.user}, many=True)

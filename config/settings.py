@@ -60,6 +60,7 @@ USE_I18N = True
 USE_TZ = True
 
 include("components/db.py")
+include("components/cache.py")
 include("components/apps.py")
 include("components/celery_conf.py")
 include("components/security.py")
