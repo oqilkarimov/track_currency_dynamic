@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, *args: Any, **options: Any) -> str | None:
         days = options["last_n_day"]
-        for day_ago in range(1, days + 1):
+        for day_ago in range(days + 1):
             with contextlib.suppress(Exception):
                 date = timezone.now().date() - timedelta(days=day_ago)
                 cbr_process = CBRProcess()
